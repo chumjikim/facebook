@@ -1,7 +1,6 @@
-from pprint import pprint
-
 import requests
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
 
 from facebook import settings
 
@@ -50,6 +49,17 @@ def login_facebook(request):
         }
         r = requests.get(url_debug_token, params=params)
         dict_debug_token = r.json()
-        pprint(dict_debug_token)
+        # pprint(dict_debug_token)
         USER_ID = dict_debug_token['data']['user_id']
         print('USER_ID : %s' % USER_ID)
+
+
+        # 페이스북 유저 ID만으로 인증
+        user = authenticate(facebook_id=USER_ID)
+        login(request, user)
+        return redirect('index')
+
+
+def logout_fbv(request):
+    logout(request)
+    return redirect('index')
